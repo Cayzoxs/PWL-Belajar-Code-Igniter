@@ -28,21 +28,21 @@
                   </tr>
                   <tr>
                     <th scope="row">3</th>
-                    <td>Ashleigh Langosh</td>
+                    <td>Mas Nasir</td>
                     <td>Finance</td>
                     <td>45</td>
                     <td>2011-08-12</td>
                   </tr>
                   <tr>
                     <th scope="row">4</th>
-                    <td>Angus Grady</td>
+                    <td>Mas Khalid</td>
                     <td>HR</td>
                     <td>34</td>
                     <td>2012-06-11</td>
                   </tr>
                   <tr>
                     <th scope="row">5</th>
-                    <td>Raheem Lehner</td>
+                    <td>Mas Malik</td>
                     <td>Dynamic Division Officer</td>
                     <td>47</td>
                     <td>2011-04-19</td>
