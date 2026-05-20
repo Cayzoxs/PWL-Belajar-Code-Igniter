@@ -4,24 +4,38 @@ namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
 
-class UserSeeder extends Seeder
+class ProductSeeder extends Seeder
 {
     public function run()
     {
-        // Menggunakan locale Indonesia
-        $faker = \Faker\Factory::create('id_ID');
-
-        for ($i = 0; $i < 10; $i++) {
-            $data = [
-                'username'   => $faker->userName,
-                'email'      => $faker->email,
-                'password'   => password_hash('1234567', PASSWORD_DEFAULT),
-                'role'       => $faker->randomElement(['admin', 'guest']),
+        // membuat data
+        $data = [
+            [
+                'nama' => 'ASUS TUF A15 FA506NF',
+                'harga'  => 10899000,
+                'jumlah' => 5,
+                'foto' => 'asus_tuf_a15.jpg',
                 'created_at' => date("Y-m-d H:i:s"),
-            ];
-            
-            // insert semua data ke tabel secara berulang
-            $this->db->table('user')->insert($data);
+            ],
+            [
+                'nama' => 'Asus Vivobook 14 A1404ZA',
+                'harga'  => 6899000,
+                'jumlah' => 7,
+                'foto' => 'asus_vivobook_14.jpg',
+                'created_at' => date("Y-m-d H:i:s"),
+            ],
+            [
+                'nama' => 'Lenovo IdeaPad Slim 3-14IAU7',
+                'harga'  => 6299000,
+                'jumlah' => 5,
+                'foto' => 'lenovo_idepad_slim_3.jpg',
+                'created_at' => date("Y-m-d H:i:s"),
+            ]
+        ];
+
+        foreach ($data as $item) {
+            // insert semua data ke tabel
+            $this->db->table('product')->insert($item);
         }
     }
 }
