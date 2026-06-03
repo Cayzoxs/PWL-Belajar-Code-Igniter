@@ -31,7 +31,6 @@
         <span>F.A.Q</span>
       </a>
     </li>
-
     <li class="nav-item">
       <a class="nav-link <?php echo (uri_string() == 'contact') ? "" : "collapsed" ?>" href="contact">
         <i class="bi bi-envelope"></i>
