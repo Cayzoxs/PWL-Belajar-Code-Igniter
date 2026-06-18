@@ -21,6 +21,12 @@
       </a>
     </li><?php endif; ?>
     <li class="nav-item">
+    <a class="nav-link <?php echo (uri_string() == 'history') ? "" : "collapsed" ?>" href="history">
+        <i class="bi bi-person"></i>
+        <span>History</span>
+    </a>
+    </li>
+    <li class="nav-item">
       <a class="nav-link <?php echo (uri_string() == 'profile') ? "" : "collapsed" ?>" href="profile">
         <i class="bi bi-person-fill"></i>
         <span>Profile</span>
