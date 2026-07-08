@@ -17,11 +17,12 @@ class TransaksiController extends BaseController
 
     public function __construct()
     {
-        helper(['number', 'form']);
+        helper(['number', 'form', 'promo']); 
         $this->cart = service('cart');
         $this->transactionModel = new TransactionModel();
         $this->transactionDetailModel = new TransactionDetailModel(); 
     }
+
     public function index()
     {  
         $data = [
@@ -99,9 +100,16 @@ class TransaksiController extends BaseController
 
     public function checkout()
     {  
+        $total_belanja = $this->cart->total();
+        
+        $biaya_jasa = hitung_biaya_jasa($total_belanja);
+        $free_mouse = hitung_free_mouse($total_belanja);
+    
         $data = [
-            'items' => $this->cart->contents(),
-            'total' => $this->cart->total() 
+            'items'      => $this->cart->contents(),
+            'total'      => $total_belanja, 
+            'biaya_jasa' => $biaya_jasa,
+            'free_mouse' => $free_mouse
         ];
 
         return view('v_checkout', $data);
@@ -177,13 +185,24 @@ class TransaksiController extends BaseController
         }
 
         $ongkir = (int) $this->request->getPost('ongkir');
+        $voucher_code = $this->request->getPost('voucher_code');
+
+        $biaya_jasa     = hitung_biaya_jasa($subtotal);
+        $diskon_voucher = hitung_diskon_voucher($subtotal, $voucher_code);
+        $free_mouse     = hitung_free_mouse($subtotal);
+
+        $grand_total = ($subtotal - $diskon_voucher) + $biaya_jasa - $free_mouse + $ongkir;
 
         $transaction = [
-            'username'    => $this->request->getPost('username'),
-            'alamat'      => $this->request->getPost('alamat'),
-            'ongkir'      => $ongkir,
-            'total_harga' => $subtotal + $ongkir,
-            'status'      => 0, 
+            'username'       => $this->request->getPost('username'),
+            'alamat'         => $this->request->getPost('alamat'),
+            'ongkir'         => $ongkir,
+            'biaya_jasa'     => $biaya_jasa,
+            'voucher_code'   => $voucher_code,
+            'diskon_voucher' => $diskon_voucher,
+            'free_mouse'     => $free_mouse,
+            'total_harga'    => $grand_total,
+            'status'         => 0, 
         ];
 
         // insert transaction
@@ -194,13 +213,12 @@ class TransaksiController extends BaseController
 
         $transactionId = $this->transactionModel->getInsertID();
 
-        // insert transaction detail
         foreach ($cartItems as $item) {
             $this->transactionDetailModel->insert([
                 'transaction_id' => $transactionId,
                 'product_id'     => $item['id'],
                 'jumlah'         => $item['qty'],
-                'diskon'         => 0,
+                'diskon'         => 0, // Abaikan atau set 0 karena diskon sekarang pakai voucher
                 'subtotal_harga' => $item['qty'] * $item['price'] 
             ]);
         }
@@ -211,10 +229,10 @@ class TransaksiController extends BaseController
             return redirect()->back()->with('error', 'Gagal membuat transaksi');
         }
 
-            //hapus session keranjang belanja 
         $this->cart->destroy();
         return redirect()->to(base_url());
     }
+
     public function history()
     {
         $username = session()->get('username'); 
@@ -231,5 +249,25 @@ class TransaksiController extends BaseController
         ]; 
 
         return view('v_history', $data);
+    }
+
+    public function hitung_promo()
+    {
+        $subtotal = $this->cart->total(); // Total harga produk
+        $voucher_code = $this->request->getPost('voucher_code');
+
+        $biaya_jasa = hitung_biaya_jasa($subtotal);
+        $diskon_voucher = hitung_diskon_voucher($subtotal, $voucher_code);
+        $free_mouse = hitung_free_mouse($subtotal);
+
+        // Subtotal baru = Subtotal Asli - Diskon + Jasa - Mouse
+        $subtotal_baru = ($subtotal - $diskon_voucher) + $biaya_jasa - $free_mouse;
+
+        return $this->response->setJSON([
+            'biaya_jasa' => $biaya_jasa,
+            'diskon_voucher' => $diskon_voucher,
+            'free_mouse' => $free_mouse,
+            'subtotal_baru' => $subtotal_baru
+        ]);
     }
 }

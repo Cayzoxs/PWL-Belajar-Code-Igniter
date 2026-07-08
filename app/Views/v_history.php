@@ -80,11 +80,45 @@ History Transaksi Pembelian <strong><?= $username ?></strong>
                                 <hr>
                             <?php endforeach; ?>
                         <?php endif; ?>
-                        Ongkir <?= number_to_currency($item['ongkir'], 'IDR') ?>
-                    </div>
-                </div>
-            </div>
-        </div>
+                        
+                        <hr>
+                        <?php
+                        // Kalkulasi otomatis
+                        $ongkir = $item['ongkir'];
+                        $diskon = isset($item['diskon']) ? $item['diskon'] : 0; 
+                        $total_pembayaran = $item['total_harga'];
+
+                        $harga_setelah_diskon = $total_pembayaran - $ongkir;
+                        $harga_asli = $harga_setelah_diskon + $diskon;
+                        ?>
+
+                        <div class="row justify-content-end">
+                            <div class="col-12">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td>Harga Asli</td>
+                                        <td class="text-end"><?= number_to_currency($harga_asli, 'IDR') ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Diskon Promo</td>
+                                        <td class="text-end text-danger">- <?= number_to_currency($diskon, 'IDR') ?></td>
+                                    </tr>
+                                    <tr class="border-bottom">
+                                        <td class="pb-2">Harga Setelah Diskon</td>
+                                        <td class="text-end pb-2"><?= number_to_currency($harga_setelah_diskon, 'IDR') ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="pt-2">Ongkos Kirim</td>
+                                        <td class="text-end pt-2"><?= number_to_currency($ongkir, 'IDR') ?></td>
+                                    </tr>
+                                    <tr class="border-top border-dark">
+                                        <td class="pt-2"><strong>Total Pembayaran</strong></td>
+                                        <td class="text-end pt-2"><strong class="fs-6 text-primary"><?= number_to_currency($total_pembayaran, 'IDR') ?></strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        </div>
         <!-- Detail Modal End -->
     <?php endforeach; ?>
 <?php endif; ?>

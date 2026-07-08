@@ -33,6 +33,7 @@ $routes->get('history', 'TransaksiController::history', ['filter' => 'auth']);
 
 $routes->get('ajax/destinations','TransaksiController::destinations', ['filter' => 'auth']);
 $routes->get('ajax/costs','TransaksiController::costs', ['filter' => 'auth']);
+$routes->post('ajax/hitung_promo', 'TransaksiController::hitung_promo');
 
 $routes->get('/faq', 'Home::faq', ['filter' => 'auth']);
 $routes->get('/profile', 'UserController::profile', ['filter' => 'auth']);
